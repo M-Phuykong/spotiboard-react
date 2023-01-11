@@ -52,6 +52,12 @@ function reducer(state : UserTopDataInterface, action : ArtistReducerAction): Us
 
 }
 
+const initialArtistParams  = {
+    limit: 25,
+    time_range: "medium_term"
+}
+
+const cookies = new Cookies()
 
 function Artist(){
 
@@ -65,12 +71,6 @@ function Artist(){
     //
     useOnClickOutside(artistSettingRef, () => setSettingArtistOpen(false))
 
-    const cookies = new Cookies()
-
-    const initialArtistParams  = {
-        limit: 25,
-        time_range: "medium_term"
-    }
 
     const [artistParams, dispatch] = useReducer(reducer, initialArtistParams);
 
@@ -102,36 +102,40 @@ function Artist(){
         <div
         className="
         flex
-        h-full w-full
+        h-auto w-full
+        p-60
+        mb-4
         items-stretch
         "
         id="top_artist"
         >
             <div
             className="
-            w-5/12
-            my-40 ml-48 mr-0
-            pl-60
+            w-7/12
+            md:pl-32 xxl:pl-96
             text-5xl md:text-9xl
-            text-white text-left text-align-center
+            text-white text-left
             "
             id="top_artist_text" >
-                MENG'S <br />
-                TOP <br />
-                {artistParams.limit} ARTISTS <br />
-                FROM {time_range_map[artistParams.time_range]}
+                <p className="p-0">
+                    MENG'S <br />
+                    TOP <br />
+                    {artistParams.limit} ARTISTS <br />
+                    FROM {time_range_map[artistParams.time_range]}
+                </p>
             </div>
 
             <div
             className="
             w-5/12
-            my-40
+            md:mr-32 xxl:mr-64
             "
             id="top_artist_carousel">
 
                 <TopCarousel items={artists}></TopCarousel>
 
                 <div
+                ref={artistSettingRef}
                 className="
                 relative
                 float-right
@@ -139,6 +143,7 @@ function Artist(){
                 "
                 id='configure_setting'>
                     <button
+
                     className="
                     opacity-75
                     hover:opacity-100 hover:scale-105
@@ -148,7 +153,7 @@ function Artist(){
                         <SettingsHorizontal strokeWidth={2} size={34} style={{color: 'white'}}/>
                     </button>
 
-                    <div ref={artistSettingRef} className={settingArtistOpen ? "active" : "hide"}>
+                    <div  className={settingArtistOpen ? "active" : "hide"}>
                         <DropdownMenu
                         callback={(key: string, val: string | number) => {dispatch({type : key, value : val})}}></DropdownMenu>
                     </div>

@@ -1,4 +1,5 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import { useInViewport } from 'react-in-viewport';
 import { Buffer } from 'buffer';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -6,6 +7,7 @@ import Cookies from 'universal-cookie';
 // Component
 import Section from '../../components/Section';
 import Artist from '../Artist/Artist';
+import Track from '../Track/Track';
 
 // Context
 import { useAuth } from "../../hooks/AuthContext";
@@ -20,6 +22,8 @@ function Home() {
   const {access_token, setAccessToken} = useAuth()
 
   // const encode = (str: string):string => Buffer.from(str, 'binary').toString('base64');
+  const sectionRef = useRef(null);
+  const viewPort = useInViewport(sectionRef)
 
   const cookies = new Cookies();
 
@@ -39,6 +43,7 @@ function Home() {
           console.log(res)
           setAccessToken(res.data.access_token)
           cookies.set("access_token", res.data.access_token, {maxAge: 3600})
+
         }
         else {
           console.log("access token value empty")
@@ -68,21 +73,30 @@ function Home() {
 
     <div ref={artistSectionRef}>
       <Section
+        viewPortRef = {sectionRef}
         goToSectionRef={section2}
         scrollTo={scrollTo}
         showArrow={true}>
           <Artist></Artist>
+
+          {/* <Track></Track> */}
       </Section>
 
 
     </div>
 
-    <div ref={section2}>
+    <div ref={section2} >
       <Section
+        viewPortRef = {sectionRef}
         goToSectionRef={section3}
         scrollTo={scrollTo}
         showArrow={true}>
-          <h1>Section 2</h1>
+          
+          {(viewPort.inViewport || viewPort.enterCount >= 1) ?
+            <Track></Track>:
+            <h1>loading</h1>
+          }
+
 
       </Section>
 
@@ -90,6 +104,7 @@ function Home() {
 
     <div ref={section3}>
       <Section
+        viewPortRef = {sectionRef}
         goToSectionRef={section3}
         scrollTo={scrollTo}
         showArrow={false}>

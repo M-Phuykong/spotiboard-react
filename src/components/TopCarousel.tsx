@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { SettingsHorizontal } from 'akar-icons';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,7 +8,7 @@ import { EffectCards, Mousewheel, Keyboard, Autoplay } from "swiper";
 import "swiper/css";
 import "swiper/css/effect-cards";
 
-import ArtistCardSingle from './ArtistCardSingle';
+import CardSingle from './CardSingle';
 
 function TopCarousel({ items } : { items: SpotifyApi.ArtistObjectFull[] |
                                         SpotifyApi.AlbumObjectFull[]}) {
@@ -33,7 +32,7 @@ function TopCarousel({ items } : { items: SpotifyApi.ArtistObjectFull[] |
                         justify-items-center
                         "
                         key={ind}>
-                            <ArtistCardSingle artist={item}></ArtistCardSingle>
+                            <CardSingle prop={item}></CardSingle>
                         </SwiperSlide>
                     )})
         }

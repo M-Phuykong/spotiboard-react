@@ -32,8 +32,8 @@ root.render(
         <Routes>
           <Route path='/' element={<Root/>}></Route>
           <Route path='home' element={<Home/>}></Route>
-          <Route path='artist' element={<Artist/>}></Route>
-          <Route path='track' element={<Track/>}></Route>
+          {/* <Route path='artist' element={<Artist/>}></Route> */}
+          {/* <Route path='track' element={<Track/>}></Route> */}
 
         </Routes>
       </AuthProvider>

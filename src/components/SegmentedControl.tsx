@@ -1,20 +1,27 @@
-import React, { useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState } from 'react'
 
 import "./SegmentedControl.scss"
 
 type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivElement>
 type callback = (val : string | number) => void
 
-interface SegmentedItemInterface {
+interface ISegmentedItem {
     label: string,
     value: string | number,
     ref: ref
 }
 
-function SegmentedControl(
-    { name, segments, callback, defaultIndex, controlRef} :
-    { name : string, segments: SegmentedItemInterface[], callback : callback, defaultIndex : number, controlRef : ref})
-    {
+interface ISegmentedControl {
+    name: string,
+    segments: ISegmentedItem[],
+    callback: callback,
+    defaultIndex: number,
+    controlRef: ref
+}
+
+
+function SegmentedControl({name, segments, callback, defaultIndex, controlRef} 
+                            : ISegmentedControl) {
 
     const [activeIndex, setActiveIndex] = useState(defaultIndex);
 
@@ -40,7 +47,6 @@ function SegmentedControl(
         className="
         flex
         min-w-fit
-
         "
         ref={controlRef}>
 
@@ -48,7 +54,7 @@ function SegmentedControl(
             {`controls
             bg-black
             before:bg-spotify-green`}>
-                {segments.map((item : SegmentedItemInterface, i : number) => (
+                {segments.map((item : ISegmentedItem, i : number) => (
                     <div
                     key = {i}
                     className = {`segment ${i === activeIndex ? 'active-label' : 'inactive'}
@@ -69,11 +75,10 @@ function SegmentedControl(
                         </label>
 
                     </div>
-
                 ))}
             </div>
         </div>
-     );
+    );
 }
 
 export default SegmentedControl;

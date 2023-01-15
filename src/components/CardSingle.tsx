@@ -2,13 +2,12 @@ import * as React from 'react';
 
 import { Palette } from 'color-thief-react';
 
+// Helper
+import { isArtist } from '../utils/helper';
+
 type TopItem = SpotifyApi.ArtistObjectFull | SpotifyApi.TrackObjectFull
 
 function CardSingle({ prop } : { prop : TopItem }) {
-
-    function isArtist(item: TopItem){
-        return (item as SpotifyApi.ArtistObjectFull).images !== undefined;
-    }
 
     let data : any = []
 
@@ -16,8 +15,6 @@ function CardSingle({ prop } : { prop : TopItem }) {
 
         if (isArtist(prop)) {
             data = (
-                <div
-                id="artist_card">
                     <Palette src={(prop as SpotifyApi.ArtistObjectFull).images[0].url}
                     crossOrigin="anonymous"
                     format="hex"
@@ -25,8 +22,35 @@ function CardSingle({ prop } : { prop : TopItem }) {
 
                         {({ data, loading }) => {
 
+                            if (loading)
+                                return (
+                                    <div
+                                    className="
+                                    w-fit
+                                    m-5
+                                    bg-gray-700
+                                    rounded-lg
+                                    ">
 
-                            if (loading) return <h1>Loading</h1>;
+                                        <img
+                                        className="
+                                        h-96
+                                        rounded-t-lg
+                                        bg-gray-800
+                                        "
+                                        alt="card_skeleton"
+                                        draggable="false"
+                                        />
+
+                                        <div
+                                        className="
+                                        w-96
+                                        h-32
+                                        p-5
+                                        "></div>
+
+                                    </div>
+                                );
 
                             return (
 
@@ -34,25 +58,25 @@ function CardSingle({ prop } : { prop : TopItem }) {
                                 style = {{ background: data?.at(0)}}
                                 className="
                                 relative
+                                w-fit
                                 top-0
                                 transition ease-in duration-500
                                 hover:-top-5
-                                max-w-sm m-5
+                                m-5
                                 rounded-lg
-                                dark:bg-gray-800 dark:border-gray-700
                                 "
                                 >
-
                                     <img className='
-                                    h-96 max-h-96
-                                    w-96 max-w-96
+                                    noselect
+                                    h-96
+                                    w-96
                                     object-cover
                                     rounded-t-lg'
                                     src={(prop as SpotifyApi.ArtistObjectFull).images[0].url}
                                     alt={prop.name}
                                     draggable="false"/>
 
-                                    <div className="p-5">
+                                    <div className="noselect p-5 ">
                                         {/* Need to do stuff with this? */}
                                         <a href="#">
                                             <h5 style={{color : data?.at(1)}} className="mb-2 text-center text-2xl font-bold tracking-tight">
@@ -63,14 +87,17 @@ function CardSingle({ prop } : { prop : TopItem }) {
 
                                     <div
                                     className="
+                                    noselect
                                     px-6 pb-2
+                                    w-full
                                     text-center
                                     ">
                                         {(prop as SpotifyApi.ArtistObjectFull).genres
                                         .sort(function(a,b) {
                                             return a.length - b.length || a.localeCompare(b);
                                         })
-                                        .slice(0,3).map((genre: string, ind: number) => {
+                                        .slice(0,1).map((genre: string, ind: number) => {
+
                                             return (
                                                 <span
                                                 style = {{ background: data?.at(1),
@@ -87,21 +114,10 @@ function CardSingle({ prop } : { prop : TopItem }) {
                                             )
                                         })}
                                     </div>
-                                    {/* <div>
-                                        Palette:
-                                        <ul>
-                                            {data?.map((color, index) => (
-                                            <li key={index} style={{ color: color }}>
-                                                <strong>{color}</strong>
-                                            </li>
-                                            ))}
-                                        </ul>
-                                    </div> */}
                                 </div>
                             );
                         }}
                     </Palette>
-                </div>
                 )
         }
 
@@ -115,8 +131,7 @@ function CardSingle({ prop } : { prop : TopItem }) {
 
                     {({ data, loading }) => {
 
-
-                        if (loading) return
+                        if (loading) return(
 
                             <div
                             className="
@@ -124,7 +139,7 @@ function CardSingle({ prop } : { prop : TopItem }) {
                             "
                             >
                                 Loading
-                            </div>;
+                            </div>);
 
                         return (
 
@@ -180,20 +195,14 @@ function CardSingle({ prop } : { prop : TopItem }) {
                                                     {(prop as SpotifyApi.TrackObjectFull).artists[0].name}
                                             </span>
                                     </div>
-
                                 </div>
-
-
-
                             </div>
                         );
                     }}
                 </Palette>
             )
         }
-
     }
-
 
     return (
         data

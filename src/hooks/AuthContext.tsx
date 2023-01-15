@@ -5,7 +5,7 @@ interface Props {
 }
 
 interface AuthContextInterface{
-    access_token: string | null; 
+    access_token: string | null;
     // refresh_token: string;
     setAccessToken: React.Dispatch<React.SetStateAction<string | null>>
 }
@@ -21,14 +21,12 @@ const AuthContextState = {
 const AuthContext = createContext<AuthContextInterface>(AuthContextState);
 
 export function AuthProvider ({ children } : Props){
-    
+
     const [access_token, setAccessToken] = useState<string | null>(null)
     // const [refresh_token, setRefreshToken] = useState("")
 
-
-
     return (
-        <AuthContext.Provider 
+        <AuthContext.Provider
         value={{access_token, setAccessToken}}>
             {children}
         </AuthContext.Provider>

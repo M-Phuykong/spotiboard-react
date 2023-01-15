@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,15 +8,14 @@ import { EffectCards, Mousewheel, Keyboard, Autoplay } from "swiper";
 import "swiper/css";
 import "swiper/css/effect-cards";
 
+// Components
 import CardSingle from './CardSingle';
+
+// Helper
+import { isArtist } from '../utils/helper';
 
 function TopCarousel({ items } : { items: SpotifyApi.ArtistObjectFull[] |
                                         SpotifyApi.AlbumObjectFull[]}) {
-
-    // type guard
-    function isArtist(item: SpotifyApi.ArtistObjectFull | SpotifyApi.AlbumObjectFull){
-        return (item as SpotifyApi.ArtistObjectFull).images !== undefined;
-    }
 
     let data : any = []
     if (typeof items !== 'undefined' && items.length > 0) {
@@ -28,6 +27,7 @@ function TopCarousel({ items } : { items: SpotifyApi.ArtistObjectFull[] |
                         <SwiperSlide
                         className="
                         flex
+                        min-h-full
                         items-center
                         justify-items-center
                         "
@@ -49,14 +49,16 @@ function TopCarousel({ items } : { items: SpotifyApi.ArtistObjectFull[] |
 
                             <img src={item.album.images[0].url} alt="" />
                         </SwiperSlide>
-                    )})
+                )})
         }
     }
 
     return (
-    <div className="
+    <div 
+    draggable="false"
+    className="
     h-full
-    bg-black
+    bg-transparent
     align-middle
     "
     id="top_carousel">

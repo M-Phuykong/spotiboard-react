@@ -1,7 +1,6 @@
 // Packages
 import React, {useEffect, useState, useRef, useReducer} from 'react';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
 import { SettingsHorizontal } from 'akar-icons';
 
 // StyleSheets
@@ -11,51 +10,24 @@ import "./Artist.scss"
 import { useAuth } from "../../hooks/AuthContext";
 import useOnClickOutside from '../../hooks/useOnClickOutside';
 
+// Helper
+import { getSpotifyTop, getSpotifyUser, reducer } from '../../utils/helper';
+
 // Components
 import TopCarousel from '../../components/TopCarousel';
 import DropdownMenu from '../../components/DropDown';
 
-interface UserTopDataInterface{
-    limit: number,
-    time_range: string,
-}
 
-interface ArtistReducerAction{
-    type : string
-    value : string | number
-}
-
-interface TimeRangeMapInterface{
+interface ITimeRangeMap{
     [key: string]: string
 }
 
-let time_range_map : TimeRangeMapInterface = {
+let time_range_map : ITimeRangeMap = {
     "short_term" : "<= 3 MONTHS",
     "medium_term" : "<= 6 MONTHS",
     "long_term" : " > 12 MONTHS"
 }
 
-function reducer(state : UserTopDataInterface, action : ArtistReducerAction): UserTopDataInterface{
-
-    switch (action.type){
-        case "limit":
-            return {
-                ...state,
-                limit : action.value as number }
-        case "time_range":
-            return {
-                ...state,
-                time_range : action.value as string}
-        default:
-            throw new Error()
-    }
-
-}
-
-const initialArtistParams  = {
-    limit: 25,
-    time_range: "medium_term"
-}
 
 const cookies = new Cookies()
 
@@ -64,6 +36,8 @@ function Artist(){
     const {access_token, setAccessToken} = useAuth();
 
     const [artists, setArtists] = useState<SpotifyApi.ArtistObjectFull[]>([]);
+    const [user, setUser] = useState<SpotifyApi.CurrentUsersProfileResponse>();
+
     const [settingArtistOpen, setSettingArtistOpen] = useState<boolean>(false);
     const artistSettingRef = useRef(null);
 
@@ -71,63 +45,89 @@ function Artist(){
     //
     useOnClickOutside(artistSettingRef, () => setSettingArtistOpen(false))
 
+    const initialArtistParams  = {
+        access_token: access_token,
+        limit: 25,
+        time_range: "medium_term"
+    }
 
     const [artistParams, dispatch] = useReducer(reducer, initialArtistParams);
 
     useEffect(() => {
-        getTop("artist", artistParams)
+        
+        getSpotifyTop("artist", artistParams, (val) => {
+            setArtists(val);
+        } )
+
+        getSpotifyUser(artistParams, (val) => {
+            setUser(val)
+        })
+
     }, [artistParams]);
 
     useEffect(()  => {
-        // need to check when the cookie expires
-        if (access_token === null){
-            setAccessToken(cookies.get("access_token"))
+        
+        if (access_token){
+
+            dispatch({type : "access_token", value : access_token})
+            
+            // console.log("access token not null")
+        }
+        else {
+            // need to check when the cookie expires
+            const cur_access_token = cookies.get("access_token")
+            
+            // Cookie is still valid
+            //
+            if (cur_access_token){
+
+                dispatch({type : "access_token", value : cur_access_token})
+                setAccessToken(cur_access_token)
+
+            } else {
+
+                console.log(access_token, "cookies expired")
+            }
         }
 
-        getTop("artist", artistParams)
-
     }, [access_token]);
-
-    function getTop(mode: string, params: UserTopDataInterface){
-        axios.get(`http://localhost:5000/${mode}?access_token=${access_token}`, { params: params})
-        .then(res => {
-            if (res.status === 200){
-                setArtists(res.data.items);
-            }
-        })
-    }
-
 
     return (
         <div
         className="
+        before:fixed before:w-full before:h-full before:top-0 before:left-0 before:blur-[3px] before:-z-20
         flex
-        h-auto w-full
-        p-60
+        min-h-full h-full
+        w-full
+        p-56
         mb-4
         items-stretch
         "
         id="top_artist"
-        >
+        >   
+
             <div
             className="
             w-7/12
             md:pl-32 xxl:pl-96
-            text-5xl md:text-9xl
+            text-xl md:text-8xl
             text-white text-left
             "
             id="top_artist_text" >
-                <p className="p-0">
-                    MENG'S <br />
-                    TOP <br />
-                    {artistParams.limit} ARTISTS <br />
-                    FROM {time_range_map[artistParams.time_range]}
-                </p>
+                <h1
+                data-text = {`
+                    ${user?.display_name}'S TOP ${artistParams.limit} ARTISTS FROM ${time_range_map[artistParams.time_range]}`}
+
+                className={"noselect relative block text-[110px] text-left font-bold uppercase " + (user ? "afa" : "hide")}
+                id="artist_text">
+                    {user?.display_name}'S TOP {artistParams.limit} ARTISTS FROM {time_range_map[artistParams.time_range]}
+                </h1>
             </div>
 
             <div
             className="
             w-5/12
+            h-max
             md:mr-32 xxl:mr-64
             "
             id="top_artist_carousel">

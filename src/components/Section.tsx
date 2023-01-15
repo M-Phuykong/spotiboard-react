@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEventHandler } from 'react'
+import React from 'react'
 import { ArrowDown } from 'akar-icons'
 
 type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivElement>
@@ -17,10 +17,6 @@ function Section({
     goToSectionRef,
     children,
     showArrow} : Props){
-
-    function handleClick(e : MouseEventHandler){
-
-    }
 
     return (
         <div

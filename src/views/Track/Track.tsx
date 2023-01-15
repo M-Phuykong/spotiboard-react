@@ -1,51 +1,74 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState, useReducer} from "react";
 import Matter from "matter-js";
+import Cookies from "universal-cookie";
 
+// Context 
 import { useAuth } from "../../hooks/AuthContext";
 
+// Stylesheet
 import "./Track.scss"
-import Cookies from "universal-cookie";
-import axios from "axios";
+
+// Components
 import CardSingle from "../../components/CardSingle";
 
-interface UserTopDataInterface{
-    limit: number,
-    time_range: string,
-}
+// Helper
+import { getSpotifyTop, reducer } from "../../utils/helper";
+
+const cookies = new Cookies()
 
 function Track(){
 
   const {access_token, setAccessToken} = useAuth();
+  
   const [tracks, setTracks] = useState<SpotifyApi.TrackObjectFull[]>([]);
-  const cookies = new Cookies()
-
 
   const containerRef = useRef<any>();
   const canvasRef = useRef<any>();
-
+  
   const initialTrackParams  = {
-        limit: 20,
-        time_range: "short_term"
+    access_token: access_token,
+    limit: 20,
+    time_range: "short_term"
   }
+  
+  const [trackParams, dispatch] = useReducer(reducer, initialTrackParams);
+  
+  useEffect(() => {
+      
+      getSpotifyTop("track", trackParams, (val) => {
+        setTracks(val);
+      })
+
+  }, [trackParams]);
 
   useEffect(()  => {
-      // need to check when the cookie expires
-      if (access_token === null){
-          setAccessToken(cookies.get("access_token"))
-      }
 
-      getTop("track", initialTrackParams)
+        if (access_token){
+
+          // console.log("access token not null", access_token)
+          dispatch({type : "access_token", value : access_token})
+
+        }
+        else {
+            // need to check when the cookie expires
+            const cur_access_token : string = cookies.get("access_token")
+            
+            // Cookie is still valid
+            //
+            if (cur_access_token){
+
+              // console.log("cookie still valid", cur_access_token)
+              dispatch({type : "access_token", value : cur_access_token})
+              setAccessToken(cur_access_token)
+
+            } else {
+
+                console.log(access_token, "cookies expired")
+            }
+        }
 
   }, [access_token]);
 
-  function getTop(mode: string, params: UserTopDataInterface){
-      axios.get(`http://localhost:5000/${mode}?access_token=${access_token}`, { params: params})
-      .then(res => {
-          if (res.status === 200){
-              setTracks(res.data.items);
-          }
-      })
-    }
 
   useEffect(() => {
 
@@ -157,7 +180,7 @@ function Track(){
 
 
       walls = []
-      walls.push(ceiling);
+      // walls.push(ceiling);
       walls.push(floor);
       walls.push(left_wall);
       walls.push(right_wall);
@@ -226,6 +249,9 @@ function Track(){
     // run the engine
     Runner.run(runner, engine)
 
+    // Composite.add(engine.world , Bodies.rectangle(0, 0, width * 2, 50,
+    //     { isStatic: true, render : {fillStyle : "transparent"} }))
+
     window.addEventListener("resize", ()=>{onResize()});
 		Events.on(runner, "afterTick",()=> {updateHtmlElems();})
 
@@ -255,10 +281,11 @@ function Track(){
       w-full
       "
       id="track_sign">
-        20 Recent Tracks!
+        {trackParams.limit} &nbsp; Recent &nbsp; Tracks!
       </h1>
 
-      <canvas ref={canvasRef} className=" w-full h-full "></canvas>
+      <canvas ref={canvasRef} className="w-full h-full"></canvas>
+      
       {tracks.map((item: any, ind: number) => {
         return (
           <div key={ind}

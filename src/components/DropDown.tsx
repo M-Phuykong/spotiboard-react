@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import SegmentedControl from './SegmentedControl';
 
@@ -16,7 +16,7 @@ function DropdownItem(props : Props) {
             {props.children}
         </div>
         );
-    }
+}
 
 function NumberCounterButton({callback} : {callback: (val : string| number) => void}){
 

@@ -10,6 +10,7 @@ import "./Track.scss"
 
 // Components
 import CardSingle from "../../components/CardSingle";
+import Footer from "../../components/Footer";
 
 // Helper
 import { getSpotifyTop, reducer } from "../../utils/helper";
@@ -18,69 +19,70 @@ const cookies = new Cookies()
 
 function Track(){
 
+  
   const {access_token, setAccessToken} = useAuth();
   
   const [tracks, setTracks] = useState<SpotifyApi.TrackObjectFull[]>([]);
-
+  
   const containerRef = useRef<any>();
   const canvasRef = useRef<any>();
   
   const initialTrackParams  = {
     access_token: access_token,
-    limit: 20,
+    limit: 25,
     time_range: "short_term"
   }
   
   const [trackParams, dispatch] = useReducer(reducer, initialTrackParams);
   
   useEffect(() => {
-      
-      getSpotifyTop("track", trackParams, (val) => {
-        setTracks(val);
-      })
-
+    
+    getSpotifyTop("track", trackParams, (val) => {
+      setTracks(val);
+    })
+    
   }, [trackParams]);
-
+  
   useEffect(()  => {
-
-        if (access_token){
-
-          // console.log("access token not null", access_token)
-          dispatch({type : "access_token", value : access_token})
-
-        }
-        else {
-            // need to check when the cookie expires
-            const cur_access_token : string = cookies.get("access_token")
+    
+    if (access_token){
+      
+      // console.log("access token not null", access_token)
+      dispatch({type : "access_token", value : access_token})
+      
+    }
+    else {
+      // need to check when the cookie expires
+      const cur_access_token : string = cookies.get("access_token")
             
-            // Cookie is still valid
-            //
-            if (cur_access_token){
-
-              // console.log("cookie still valid", cur_access_token)
-              dispatch({type : "access_token", value : cur_access_token})
-              setAccessToken(cur_access_token)
-
-            } else {
-
-                console.log(access_token, "cookies expired")
-            }
-        }
-
+      // Cookie is still valid
+      //
+      if (cur_access_token){
+        
+        // console.log("cookie still valid", cur_access_token)
+        dispatch({type : "access_token", value : cur_access_token})
+        setAccessToken(cur_access_token)
+        
+      } else {
+        
+        console.log(access_token, "cookies expired")
+      }
+    }
+    
   }, [access_token]);
+  
+  let Engine = Matter.Engine,
+    Render = Matter.Render,
+    Runner = Matter.Runner,
+    Bodies = Matter.Bodies,
+    Events = Matter.Events,
+    Body = Matter.Body,
+    Composite = Matter.Composite;
+
+  const engine = Engine.create({});
 
 
   useEffect(() => {
-
-    let Engine = Matter.Engine,
-        Render = Matter.Render,
-        Runner = Matter.Runner,
-        Bodies = Matter.Bodies,
-        Events = Matter.Events,
-        Body = Matter.Body,
-        Composite = Matter.Composite;
-
-    const engine = Engine.create({});
     let width = containerRef.current?.clientWidth ? containerRef.current.clientWidth : 0;
     let height = containerRef.current?.clientHeight ? containerRef.current.clientHeight : 0;
     let htmlBods : any[] = [];
@@ -113,7 +115,6 @@ function Track(){
           elem.classList.add("abs")
 
           let bod : any = Bodies.rectangle(
-            // b.left + (b.width / 2) + 250,
             b.left + (b.width / 2) + (Math.random() * (width - (width / 5)) + (width/ 100)) , // x
             b.top + (b.height / 2), // y
             1, // width
@@ -162,8 +163,6 @@ function Track(){
     }
 
     function createWall() {
-      // let ceiling = Bodies.rectangle(0, 0, width * 2, 50,
-      //   { isStatic: true, render : {fillStyle : "red"} })
       let ceiling = Bodies.rectangle(0, 0, width * 2, 50,
         { isStatic: true, render : {fillStyle : "transparent"} })
 
@@ -248,9 +247,8 @@ function Track(){
 
     // run the engine
     Runner.run(runner, engine)
+    
 
-    // Composite.add(engine.world , Bodies.rectangle(0, 0, width * 2, 50,
-    //     { isStatic: true, render : {fillStyle : "transparent"} }))
 
     window.addEventListener("resize", ()=>{onResize()});
 		Events.on(runner, "afterTick",()=> {updateHtmlElems();})
@@ -267,7 +265,9 @@ function Track(){
     <div ref = {containerRef}
     className="
     noselect
-    w-full h-full
+    relative
+    w-full 
+    min-h-full h-full
     justify-center items-center text-center
 
     ">
@@ -281,7 +281,7 @@ function Track(){
       w-full
       "
       id="track_sign">
-        {trackParams.limit} &nbsp; Recent &nbsp; Tracks!
+        {initialTrackParams.limit} &nbsp; Recent &nbsp; Tracks!
       </h1>
 
       <canvas ref={canvasRef} className="w-full h-full"></canvas>
@@ -301,7 +301,7 @@ function Track(){
         )
       })}
 
-      <h1></h1>
+      <Footer></Footer>
 
     </div>
   )

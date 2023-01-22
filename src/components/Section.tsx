@@ -6,7 +6,7 @@ type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivEleme
 interface Props {
     scrollTo : (section : ref) => void
     viewPortRef: ref
-    goToSectionRef : ref
+    goToSectionRef : ref 
     children ?: React.ReactNode
     showArrow : boolean
 }
@@ -18,31 +18,33 @@ function Section({
     children,
     showArrow} : Props){
 
+
     return (
-        <div
+        <section
         ref = {viewPortRef}
         className="
-        flex relative
-        h-screen w-full
+        flex 
+        relative
+        h-screen w-screen
         justify-center
         items-center
         snap-center
         "
-        id="section">
+        >   
             {children}
             {showArrow && (
                 <button
                 className="
                 absolute
                 w-10 h-10
-                bottom-5 left-0 right-0
+                bottom-8 left-0 right-0
                 mx-auto mt-0
                 "
                 onClick = {() => scrollTo(goToSectionRef)}>
                     <ArrowDown strokeWidth={3} size={48} className="text-white" />
                 </button>
             )}
-        </div>
+        </section>
     )
 }
 

@@ -4,7 +4,6 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { motion } from 'framer-motion';
 
-
 // Component
 import Section from '../../components/Section';
 import Artist from '../Artist/Artist';
@@ -20,13 +19,20 @@ type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivEleme
 
 const cookies = new Cookies();
 
+const REDIRECT_URI =  "http://localhost:3000/home"
+
+
 function Home() {
 
 
   const {access_token, setAccessToken} = useAuth()
 
   const sectionRef = useRef(null);
-  const viewPort = useInViewport(sectionRef)
+  const viewPort = useInViewport(sectionRef);
+
+  
+  const sectionRef2 = useRef(null);
+  const viewPort2 = useInViewport(sectionRef2);
 
   useEffect(() => {
 
@@ -35,16 +41,17 @@ function Home() {
     if (code === null){
       console.log("no code available");
     }
+
     else {
 
-      // window.history.pushState("", "", REDIRECT_URI);
       axios.get(`http://localhost:5000/login?${code}`)
       .then(res => {
-        if (res.data !== "" && cookies.get("access_token") === undefined){
+        if (res.data !== "" || cookies.get("access_token") === undefined){
           
           setAccessToken(res.data.access_token)
           cookies.set("access_token", res.data.access_token, {maxAge: 3600})
-        
+          window.location.replace(REDIRECT_URI);
+          
         }
         else {
           console.log("access token value empty")
@@ -55,7 +62,7 @@ function Home() {
 
   const artistSectionRef = useRef(null);
   const trackSectionRef = useRef(null);
-  const section3 = useRef(null);
+  const section3 =  useRef(null);
 
   function scrollTo(section : ref){
     section.current?.scrollIntoView({behavior: "smooth"})
@@ -95,90 +102,91 @@ function Home() {
     animate: {
       y: 80,
       transition: {
-        duration: 1.5,
+        duration: 2,
         ease: [0.87, 0, 0.13, 1],
       },
+      z: -50,
     },
   };
+  
   return (
-    <motion.div
+    <div
     className="
-    relative
-    h-screen w-100
+    w-full min-w-full max-w-full
+    h-screen min-h-screen max-h-screen
     overflow-y-auto overscroll-y-contain
     snap-y snap-mandatory
     "
     id="main_container">
-    <motion.div
-      className="absolute z-50 w-full bg-black"
-      initial="initial"
-      animate="animate"
-      variants={blackBox}
-    >
-        <motion.svg variants={textContainer} className="absolute z-50 flex">
-          <pattern
-            id="pattern"
-            patternUnits="userSpaceOnUse"
-            width={750}
-            height={800}
-            className="text-white"
-          >
-            <rect className="w-full h-full fill-current" />
-            <motion.rect variants={text} className="w-full h-full text-gray-600 fill-current" />
-          </pattern>
-          <text
-            className="text-4xl font-bold"
-            text-anchor="middle"
-            x="50%"
-            y="50%"
-            style={{ fill: "url(#pattern)" }}
-          >
-            tailstore
-          </text>
-      </motion.svg>
-    </motion.div>
 
-    <div ref={artistSectionRef}>
 
-      <Section
+
+      <div ref={artistSectionRef} className='h-screen max-w-full w-full text-white'>
+        
+        <Section
         viewPortRef = {sectionRef}
         goToSectionRef={trackSectionRef}
         scrollTo={scrollTo}
         showArrow={true}>
           <Artist></Artist>
-      </Section>
+        </Section>
 
-    </div>
+      </div>
 
-    <div ref={trackSectionRef} >
-      <Section
-        viewPortRef = {sectionRef}
-        goToSectionRef={section3}
-        scrollTo={scrollTo}
-        showArrow={true}>
-          {(viewPort.inViewport || viewPort.enterCount >= 1) ?
-            <Track></Track>:
-            <h1 className='text-white'>loading</h1>
-          }
-      </Section>
+      <div ref={trackSectionRef}>
 
-    </div>
-
-    <div ref={section3}>
-      <Section
-        viewPortRef = {sectionRef}
+        <Section
+        viewPortRef = {sectionRef2}
         goToSectionRef={section3}
         scrollTo={scrollTo}
         showArrow={false}>
-          <h1>Section 3</h1>
+            {(viewPort2.inViewport || viewPort2.enterCount >= 1) ?
+              <Track></Track>:
+              <h1 className='text-white'>loading</h1>
+            }
+        </Section>
+      </div>
 
-      </Section>
+
+
+    {/* <motion.div
+      className="absolute z-50 w-full bg-black"
+      initial="initial"
+      animate="animate"
+      variants={blackBox}
+    >
+        <motion.svg variants={textContainer} 
+        className="absolute text-center left-0 right-0 w-full h-full z-50">
+          <pattern
+            id="pattern"
+            patternUnits="userSpaceOnUse"
+            width={750}
+            height={800}
+            x = "50%"
+            y = "43%"
+            className="text-white"
+          >
+            <rect className="w-full h-full fill-current" />
+            <motion.rect variants={text} className="w-full h-full text-neon-blue fill-current " />
+          </pattern>
+          <text
+            className="text-4xl font-bold"
+            textAnchor="middle"
+            x="50%"
+            y="50%"
+            style={{ fill: "url(#pattern)" }}
+          >
+            SynthBoard
+          </text>
+      </motion.svg>
+    </motion.div> */}
+
+
 
     </div>
-
-    </motion.div>
   );
 }
+
 
 
 

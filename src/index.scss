@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-::-webkit-scrollbar {
-  width: 0px;
+::-webkit-scrollbar, 
+::-webkit-scrollbar-track-piece, 
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  // width: 0px;
   background: transparent;
   /* make scrollbar transparent */
 }
@@ -23,6 +28,7 @@ input[type=number] {
 
 html {
   background: #000;
+  margin: 0;
 }
 
 body {

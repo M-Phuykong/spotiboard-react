@@ -91,7 +91,6 @@ function Artist(){
         }
 
     }, [access_token]);
-
     return (
         <div
         className="
@@ -100,7 +99,6 @@ function Artist(){
         min-h-full h-full
         w-full
         p-56
-        mb-4
         items-stretch
         "
         id="top_artist"

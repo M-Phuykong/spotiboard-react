@@ -20,6 +20,7 @@ type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivEleme
 const cookies = new Cookies();
 
 const REDIRECT_URI =  "https://synthboard.onrender.com/home"
+const BACKEND_URI = "https://spotify-dashboard-backend.herokuapp.com"
 
 function Home() {
 
@@ -41,7 +42,7 @@ function Home() {
 
     else {
 
-      axios.get(`http://localhost:5000/login?${code}`)
+      axios.get(`${BACKEND_URI}/login?${code}`)
       .then(res => {
         if (res.data !== "" || cookies.get("access_token") === undefined){
           

@@ -1,5 +1,5 @@
 import axios from "axios"
-const BACKEND_URL = "http://localhost:5000"
+const BACKEND_URL = "https://spotify-dashboard-backend.herokuapp.com"
 
 interface ITopParam {
     access_token: string | null,

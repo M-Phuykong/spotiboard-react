@@ -15,11 +15,12 @@ import { useAuth } from "../../hooks/AuthContext";
 // Style
 import './Home.scss';
 
+import { BACKEND_URL, REDIRECT_URI } from '../../utils/helper';
+
 type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivElement>
 
 const cookies = new Cookies();
 
-import { BACKEND_URL, REDIRECT_URI } from '../../utils/helper';
 
 
 function Home() {

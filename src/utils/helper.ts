@@ -1,5 +1,6 @@
 import axios from "axios"
-const BACKEND_URL = "https://spotify-dashboard-backend.herokuapp.com"
+export const BACKEND_URL = "https://spotify-dashboard-backend.herokuapp.com"
+export const REDIRECT_URI =  "https://synthboard.onrender.com/home"
 
 interface ITopParam {
     access_token: string | null,

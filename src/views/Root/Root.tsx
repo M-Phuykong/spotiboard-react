@@ -4,10 +4,12 @@ import './Root.scss';
 
 import { Outlet } from 'react-router-dom';
 
+import { BACKEND_URL } from '../../utils/helper';
+
 function Root() {
     function login(){
     
-        axios.get("http://localhost:5000")
+        axios.get(BACKEND_URL)
         .then((response) => {
             window.location.href = response.data;
         });

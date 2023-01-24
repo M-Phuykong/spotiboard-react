@@ -19,18 +19,15 @@ type ref = React.MutableRefObject<HTMLDivElement> | React.RefObject<HTMLDivEleme
 
 const cookies = new Cookies();
 
-const REDIRECT_URI =  "http://localhost:3000/home"
-
+const REDIRECT_URI =  "https://synthboard.onrender.com/home"
 
 function Home() {
-
 
   const {access_token, setAccessToken} = useAuth()
 
   const sectionRef = useRef(null);
   const viewPort = useInViewport(sectionRef);
 
-  
   const sectionRef2 = useRef(null);
   const viewPort2 = useInViewport(sectionRef2);
 
